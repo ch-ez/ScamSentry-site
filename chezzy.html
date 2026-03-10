@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SentryBotz</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: #fff;
+      color: #111;
+      padding-top: 80px;
+    }
+
+    /* ily chez for giving me some things to do :) */
+
+    section {
+      padding: 32px 48px;
+      border-bottom: 1px solid #ddd;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    #features {
+      max-width: 960px;
+      border-bottom: none;
+    }
+
+    .label {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 3.2rem;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #444;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .box {
+      position: relative;
+      border: 1px solid #ccc;
+      background: #f7f7f7;
+      border-radius: 4px;
+      padding: 20px 24px;
+      margin-top: 24px;
+      text-align: left;
+    }
+
+    .box-num {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #666;
+    }
+    .box:has(.box-num) .box-title {
+      padding-left: 24px;
+    }
+
+    .box-title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #111;
+      margin-bottom: 10px;
+    }
+
+    .box-desc {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: #555;
+      margin: 0;
+    }
+
+    .box-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .box-row .box { margin-top: 0; }
+
+    .example-media {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin-top: 24px;
+      border-radius: 24px;
+      border: 1px solid #ddd;
+    }
+    .example-media.scale-down {
+      max-width: 75%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .examples-row {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    .examples-row .example-media {
+      margin-top: 0;
+      max-width: 100%;
+      flex: 1;
+      min-width: 0;
+      object-fit: contain;
+    }
+    .examples-row .example-media.scale-up {
+      flex: 2;
+    }
+    .examples-row .example-media.scale-up-more {
+      flex: 1.5;
+    }
+    .examples-row .example-media.scale-down {
+      max-width: 100%;
+    }
+
+    .invite-btn {
+      display: inline-block;
+      margin-top: 72px;
+      padding: 16px 36px;
+      background: #5865F2;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #fff;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      transition: background 0.15s;
+    }
+
+    .invite-btn:hover {
+      background: #4752C4;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      max-width: 700px;
+      margin: 48px auto 0;
+      text-align: center;
+    }
+
+    .stat-item .stat-value {
+      font-size: 2.35rem;
+      font-weight: bold;
+      color: #111;
+    }
+
+    .stat-item .stat-label {
+      font-size: 0.95rem;
+      color: #666;
+      margin-top: 6px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <section id="hero">
+    <div class="label">Discord Bot</div>
+    <h1>SentryBot</h1>
+    <p>botzz stufff</p>
+    <div class="stats-row" id="stats">
+      <div class="stat-item"><span class="stat-value" id="stat-servers">—</span><div class="stat-label">Servers</div></div>
+      <div class="stat-item"><span class="stat-value" id="stat-members">—</span><div class="stat-label">Total members</div></div>
+      <div class="stat-item"><span class="stat-value" id="stat-deleted">—</span><div class="stat-label">Scam messages deleted</div></div>
+      <div class="stat-item"><span class="stat-value" id="stat-alerted">—</span><div class="stat-label">Users alerted</div></div>
+    </div>
+    <a class="invite-btn"
+       href="https://discord.com/oauth2/authorize?client_id=1480020958298505257&permissions=4504819398200514&integration_type=0&scope=bot"
+       target="_blank" rel="noopener">
+      Add to Discord
+    </a>
+  </section>
+
+  <section id="features">
+    <div class="label">Features</div>
+    <h2>What it does</h2>
+    <p>bot purpase and stuff</p>
+    <div class="box-row">
+      <div class="box">
+        <span class="box-num">1</span>
+        <div class="box-title">Identify and delete</div>
+        <p class="box-desc">We use OCR and hash blacklists to identify the scam images.</p>
+      </div>
+      <div class="box">
+        <span class="box-num">2</span>
+        <div class="box-title">Log for server staff</div>
+        <p class="box-desc">Deletions are logged by the bot.</p>
+      </div>
+      <div class="box">
+        <span class="box-num">3</span>
+        <div class="box-title">Notify the hacked user</div>
+        <p class="box-desc">The bot will DM the hacked user with info on how they were hacked.</p>
+      </div>
+    </div>
+    </section>
+
+  <section id="examples">
+    <div class="label">Example</div>
+    <h2>See it in action</h2>
+    <p>Bot automatically deletes scam images then alerts the user.</p>
+    <video class="example-media" src="showcase2.mp4" autoplay loop muted playsinline></video>
+    <div class="examples-row">
+      <img class="example-media scale-down scale-up" src="showcase1.png" alt="SentryBot example" />
+      <img class="example-media scale-down scale-up-more" src="3.png" alt="SentryBot example" />
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      var url = 'https://raw.githubusercontent.com/ch-ez/scamsentry-hashes/main/stats.json';
+      function formatNum(n) { return n.toLocaleString(); }
+      fetch(url)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          document.getElementById('stat-servers').textContent = formatNum(data.servers || 0);
+          document.getElementById('stat-members').textContent = formatNum(data.totalMembers || 0);
+          document.getElementById('stat-deleted').textContent = formatNum(data.scamMessagesDeleted || 0);
+          document.getElementById('stat-alerted').textContent = formatNum(data.usersAlerted || 0);
+        })
+        .catch(function () { });
+    })();
+  </script>
+</body>
+</html>
