@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="logo.png" type="image/png" />
+  <meta property="og:title" content="ScamSentry" />
+  <meta property="og:description" content="Invite this bot to protect your discord server" />
+  <meta property="og:type" content="website" />
+  <title>ScamSentry</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-2) var(--border);
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--border);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-2);
+      border-radius: 5px;
+      border: 2px solid var(--border);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted-3);
+    }
+
+    :root {
+      --bg: #fff;
+      --text: #111;
+      --text-muted: #444;
+      --text-muted-2: #555;
+      --text-muted-3: #666;
+      --text-muted-4: #888;
+      --border: #ddd;
+      --border-2: #ccc;
+      --surface: #f7f7f7;
+      --tooltip-bg: #fff;
+      --avatar-border: #fff;
+      --shadow: rgba(0,0,0,0.08);
+      --shadow-2: rgba(0,0,0,0.12);
+    }
+
+    [data-theme="dark"] {
+      --bg: #1a1a1a;
+      --text: #f0f0f0;
+      --text-muted: #c0c0c0;
+      --text-muted-2: #b0b0b0;
+      --text-muted-3: #999;
+      --text-muted-4: #888;
+      --border: #333;
+      --border-2: #444;
+      --surface: #252525;
+      --tooltip-bg: #252525;
+      --avatar-border: #252525;
+      --shadow: rgba(0,0,0,0.3);
+      --shadow-2: rgba(0,0,0,0.4);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding-top: 20px;
+      overflow-x: hidden;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    img, video { max-width: 100%; }
+
+    /* ily chez for giving me some things to do :) */
+
+    .top-right {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .contributors-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      box-shadow: 0 1px 4px var(--shadow);
+    }
+    .contributors-btn:hover {
+      transform: scale(1.02);
+    }
+    .theme-toggle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border-2);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      box-shadow: 0 1px 4px var(--shadow);
+    }
+    .theme-toggle:hover {
+      transform: scale(1.05);
+    }
+    .theme-toggle img {
+      width: 22px;
+      height: 22px;
+    }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    [data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+    [data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+    [data-theme="dark"] .theme-toggle img { filter: invert(1); }
+
+    section {
+      padding: 32px 48px;
+      border-bottom: 1px solid var(--border);
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    #hero {
+      padding-top: 0;
+      padding-bottom: 16px;
+    }
+    #features {
+      max-width: 960px;
+      border-bottom: none;
+    }
+    #examples {
+      max-width: none;
+      padding-top: 20px;
+      padding-bottom: 24px;
+    }
+    #examples .label,
+    #examples h2 {
+      margin-bottom: 10px;
+    }
+    #examples .example-media {
+      margin-top: 14px;
+    }
+    #examples .examples-row {
+      margin-top: 14px;
+    }
+    .examples-heading-link {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .examples-heading-link:hover {
+      color: var(--text-muted-2);
+    }
+
+    .label {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted-4);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 3.2rem;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .box {
+      position: relative;
+      border: 1px solid var(--border-2);
+      background: var(--surface);
+      border-radius: 4px;
+      padding: 20px 24px;
+      margin-top: 24px;
+      text-align: left;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .box-num {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--text-muted-3);
+    }
+    .box:has(.box-num) .box-title {
+      padding-left: 24px;
+    }
+
+    .box-title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .box-desc {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-muted-2);
+      margin: 0;
+    }
+
+    .box-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .box-row .box { margin-top: 0; }
+
+    .example-media {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin-top: 24px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+    }
+    #examples > .example-media {
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 50%;
+    }
+    .examples-row {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: nowrap;
+      margin-top: 24px;
+      max-width: 75%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .examples-row .example-media {
+      margin-top: 0;
+      flex: 1 1 0;
+      width: 0;
+      min-width: 0;
+      object-fit: contain;
+      height: auto;
+    }
+    .examples-row .example-media:first-child {
+      flex: 1.067 1 0;
+    }
+
+    .invite-btn {
+      display: block;
+      width: fit-content;
+      margin: 32px auto 0;
+      padding: 16px 36px;
+      background: #5865F2;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #fff;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      transition: background 0.15s;
+    }
+
+    .invite-btn:hover {
+      background: #4752C4;
+    }
+
+    .invite-note {
+      font-size: 0.85rem;
+      color: var(--text-muted-4);
+      margin: 12px auto 0;
+      max-width: 360px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 700px;
+      margin: 48px auto 0;
+      text-align: center;
+    }
+
+    .stat-item .stat-value {
+      font-size: 2.35rem;
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    .stat-item .stat-label {
+      font-size: 0.95rem;
+      color: var(--text-muted-3);
+      margin-top: 6px;
+    }
+
+    .presented-by {
+      font-size: 0.85rem;
+      color: var(--text-muted-4);
+      margin-bottom: 12px;
+    }
+
+    .avatar-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .avatar-row .avatar-wrap {
+      position: relative;
+      margin-left: -10px;
+    }
+
+    .avatar-row .avatar-wrap:first-child {
+      margin-left: 0;
+    }
+
+    .avatar-row .avatar-wrap .avatar-tooltip {
+      position: absolute;
+      left: 50%;
+      bottom: 100%;
+      transform: translateX(-50%);
+      margin-bottom: 6px;
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      color: var(--text-muted-2);
+      background: var(--tooltip-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.12s ease;
+      box-shadow: 0 1px 4px var(--shadow);
+    }
+
+    .avatar-row .avatar-wrap:hover .avatar-tooltip {
+      opacity: 1;
+    }
+
+    .avatar-row .avatar-wrap img {
+      display: block;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--avatar-border);
+      box-shadow: 0 1px 3px var(--shadow-2);
+    }
+
+    @media (max-width: 768px) {
+      body { padding-top: 12px; }
+      section {
+        padding: 24px 20px;
+      }
+      #hero { padding-bottom: 12px; }
+      h1 { font-size: 2.2rem; margin-bottom: 12px; }
+      h2 { font-size: 1.45rem; margin-bottom: 12px; }
+      .label { margin-bottom: 8px; }
+      p { font-size: 0.95rem; }
+      .box {
+        padding: 16px 18px;
+        margin-top: 16px;
+      }
+      .box-num { top: 12px; left: 14px; font-size: 1rem; }
+      .box:has(.box-num) .box-title { padding-left: 20px; }
+      .box-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .stats-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-top: 28px;
+        max-width: 100%;
+      }
+      .stat-item .stat-value { font-size: 1.9rem; }
+      .stat-item .stat-label { font-size: 0.9rem; }
+      .invite-btn {
+        margin-top: 24px;
+        padding: 14px 28px;
+        font-size: 1rem;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .example-media { margin-top: 16px; border-radius: 12px; }
+      #examples > .example-media { max-width: 100%; }
+      .examples-row {
+        flex-direction: column;
+        flex-wrap: wrap;
+        max-width: 100%;
+        gap: 16px;
+        margin-top: 16px;
+      }
+      .examples-row .example-media {
+        flex: none;
+        width: 100%;
+        min-width: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      #hero video {
+        max-width: 75% !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      section { padding: 20px 16px; }
+      h1 { font-size: 1.85rem; }
+      h2 { font-size: 1.25rem; }
+      #hero video { max-width: 90% !important; }
+    }
+
+    .load-fade {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: loadFadeIn 0.35s ease forwards;
+    }
+    @keyframes loadFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-video { border: 1px solid var(--border) !important; transition: border-color 0.2s ease; }
+
+  </style>
+</head>
+<body>
+
+  <div class="top-right">
+    <a href="contributors.html" class="contributors-btn">Contributors</a>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+      <img class="icon-moon" src="moon.svg" alt="" width="22" height="22" />
+      <img class="icon-sun" src="sun.svg" alt="" width="22" height="22" />
+    </button>
+  </div>
+
+  <section id="hero">
+    <video class="hero-video load-fade"
+      src="https://big.file.chez.has.no.nitro.scraped.lol/chez%20anim%20one(1)%20(1).mp4"
+      autoplay
+      loop
+      muted
+      playsinline
+      style="display: block; max-width: 40%; height: auto; margin: 0 auto 24px auto; border-radius: 24px;">
+    </video>
+    <div class="label load-fade">Discord Bot</div>
+    <h1 class="load-fade">ScamSentry</h1>
+    <div class="presented-by load-fade">made by</div>
+    <div class="avatar-row load-fade">
+      <span class="avatar-wrap"><span class="avatar-tooltip">Chez</span><img src="chez.webp" alt="Chez" /></span>
+    </div>
+    <p></p>
+    <div class="stats-row load-fade" id="stats">
+      <div class="stat-item"><span class="stat-value" id="stat-servers">—</span><div class="stat-label">Servers</div></div>
+      <div class="stat-item"><span class="stat-value" id="stat-members">—</span><div class="stat-label">Total members</div></div>
+      <div class="stat-item"><span class="stat-value" id="stat-deleted">—</span><div class="stat-label">Scam messages deleted</div></div>
+    </div>
+    <a class="invite-btn load-fade"
+       href="https://discord.com/oauth2/authorize?client_id=1480020958298505257&permissions=4504819398200514&integration_type=0&scope=bot"
+       target="_blank" rel="noopener">
+      Add to Discord
+    </a>
+    <p class="invite-note load-fade">Remove perms that you think are not needed for your use case.</p>
+  </section>
+
+  <section id="features">
+    <div class="label load-fade">Features</div>
+    <h2 class="load-fade">What it does</h2>
+    <div class="box-row">
+      <div class="box load-fade">
+        <span class="box-num">1</span>
+        <div class="box-title">Identify and delete</div>
+        <p class="box-desc">We use OCR and hash blacklists to identify the scam images.</p>
+      </div>
+      <div class="box load-fade">
+        <span class="box-num">2</span>
+        <div class="box-title">Log for server staff</div>
+        <p class="box-desc">Deletions are logged by the bot.</p>
+      </div>
+      <div class="box load-fade">
+        <span class="box-num">3</span>
+        <div class="box-title">Notify the hacked user</div>
+        <p class="box-desc">The bot will DM the hacked user with info on how they were hacked.</p>
+      </div>
+    </div>
+    </section>
+
+  <section id="examples">
+    <div class="label load-fade">Example</div>
+    <h2 class="load-fade"><a href="#examples" class="examples-heading-link">See it in action</a></h2>
+    <video class="example-media load-fade" src="showcase2.mp4" autoplay loop muted playsinline></video>
+    <div class="examples-row">
+      <img class="example-media load-fade" src="FullMessage2.svg" alt="SentryBot example" />
+      <img class="example-media load-fade" src="FullMessage3.svg" alt="SentryBot example" />
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      var KEY = 'scamsentry-theme';
+      var root = document.documentElement;
+      function getTheme() {
+        try { return localStorage.getItem(KEY); } catch (e) { return null; }
+      }
+      function setTheme(theme) {
+        try { localStorage.setItem(KEY, theme); } catch (e) {}
+        root.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+      }
+      var params = new URLSearchParams(window.location.search);
+      var fromUrl = params.has('d') ? 'dark' : (params.has('l') ? 'light' : null);
+      if (fromUrl) {
+        setTheme(fromUrl);
+      } else {
+        var saved = getTheme();
+        if (saved === 'dark' || saved === 'light') {
+          setTheme(saved);
+        } else {
+          root.setAttribute('data-theme', 'dark');
+        }
+      }
+      document.getElementById('theme-toggle').addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        setTheme(next);
+      });
+    })();
+    (function () {
+      var els = document.querySelectorAll('.load-fade');
+      els.forEach(function (el, i) { el.style.animationDelay = (i * 0.04) + 's'; });
+    })();
+    (function () {
+      var url = 'https://raw.githubusercontent.com/ch-ez/scamsentry-hashes/main/stats.json';
+      function formatNum(n) { return n.toLocaleString(); }
+      fetch(url)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          document.getElementById('stat-servers').textContent = formatNum(data.servers || 0);
+          document.getElementById('stat-members').textContent = formatNum(data.totalMembers || 0);
+          document.getElementById('stat-deleted').textContent = formatNum(data.scamMessagesDeleted || 0);
+        })
+        .catch(function () { });
+    })();
+  </script>
+</body>
+</html>
